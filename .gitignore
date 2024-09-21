@@ -6,6 +6,7 @@ build/
 !**/src/test/**/build/
 .env
 *.properties
+.venv
 
 bin/
 !**/src/main/**/bin/

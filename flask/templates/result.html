@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>결과 분석</title>
+</head>
+<body>
+    <h1>결과 분석</h1>
+    <img src="{{ analysis_image }}" alt="결과 그래프">
+    <p>{{ analysis_text }}</p>
+    <table border="1">
+        <tr><th>유형</th><th>점수</th></tr>
+        {% for row in analysis_table %}
+            <tr><td>{{ row[0] }}</td><td>{{ row[1] }}</td></tr>
+        {% endfor %}
+    </table>
+</body>
+</html>

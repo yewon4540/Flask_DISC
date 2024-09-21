@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>DISC 설문조사</title>
+</head>
+<body>
+    <h1>DISC 설문조사</h1>
+    <form action="{{ url_for('survey') }}" method="post">
+        {% for idx, question in enumerate(questions) %}
+            <p>{{ idx+1 }}. {{ question['question'] }}</p>
+            {% for option in question['options'] %}
+                <input type="radio" name="question_{{ idx+1 }}" value="{{ option[1] }}"> {{ option[0] }}<br>
+            {% endfor %}
+        {% endfor %}
+        <button type="submit">결과보기</button>
+    </form>
+</body>
+</html>
