@@ -1,0 +1,14 @@
+<form action="/submit-survey" method="post">
+    <div th:each="question, stat : ${questions}">
+        <p th:text="${stat.index + 1} + '. ' + ${question.text}"></p>
+        <div th:each="option : ${question.options}">
+            <input type="radio" th:name="'answer' + ${stat.index}" th:value="${option.value}"> 
+            <label th:text="${option.text}"></label>
+        </div>
+    </div>
+    <button type="submit">결과보기</button>
+</form>
+
+<div th:if="${alertMessage}">
+    <script>alert([[${alertMessage}]])</script>
+</div>

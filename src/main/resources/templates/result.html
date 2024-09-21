@@ -1,0 +1,9 @@
+<h1>결과 분석</h1>
+<img th:src="@{${graphPath}}" alt="분석 그래프">
+<p th:text="${analysisText}"></p>
+
+<table>
+    <tr th:each="row : ${analysisTable}">
+        <td th:each="col : ${row}" th:text="${col}"></td>
+    </tr>
+</table>
