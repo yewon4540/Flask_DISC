@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>DISC 설문조사</title>
+</head>
+<body>
+    <h1>DISC 설문조사</h1>
+    <form action="{{ url_for('survey') }}" method="post">
+        {% for question in questions %}
+            <p>{{ loop.index }}. {{ question['question'] }}</p>
+            {% for option in question['options'] %}
+                <input type="radio" name="question_{{ loop.index }}" value="{{ option['value'] }}"> {{ option['text'] }}<br>
+            {% endfor %}
+        {% endfor %}
+        <button type="submit">결과보기</button>
+    </form>
+</body>
+</html>
+
+if (!isChecked) {
+    alert('항목에 체크해주세요.');
+    return;
+}
+
+
+if (isChecked) {
+    console.log("Form is being submitted");  // 폼이 제출되기 직전에 로그 확인
+    document.getElementById('form').submit();  // 제출
+} else {
+    alert('항목에 체크해주세요.');
+}
+
+// 첫 번째 질문 로드
+            loadQuestion(currentQuestionIndex);

@@ -3,17 +3,179 @@
 <head>
     <meta charset="UTF-8">
     <title>DISC 설문조사</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            background-color: #f9f9f9;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 10px;
+            text-align: left;
+        }
+        tr {
+            cursor: pointer; /* 행 전체를 클릭할 수 있도록 설정 */
+        }
+        tr:hover {
+            background-color: #f0f8ff; /* hover 시 배경 색상 변경 */
+        }
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between; /* 이전, 제출, 다음 버튼 배치 */
+            margin-top: 20px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        #prev {
+            cursor: not-allowed; /* 비활성화 시 포인터 변경 */
+        }
+        #next {
+            display: inline-block;
+        }
+        #submit {
+            display: none; /* 마지막 질문 전까지는 제출 버튼 숨김 */
+            margin: 0 auto; /* 가운데 배치 */
+        }
+        input[type="radio"] {
+            transform: scale(1.5); /* 라디오 버튼 크기를 키움 */
+            margin-right: 10px;
+        }
+        input[type="radio"] {
+            display: inline-block; /* 라디오 버튼 표시 */
+        }
+        /* 선택된 상태의 행 강조 */
+        tr.checked {
+            background-color: #d1e7dd;
+        }
+    </style>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const questions = {{ questions|tojson }};
+            let currentQuestionIndex = 0;
+            const totalQuestions = questions.length;
+    
+            function loadQuestion(index) {
+                const questionElement = document.getElementById('question');
+                const optionsElement = document.getElementById('options');
+                const prevButton = document.getElementById('prev');
+                const nextButton = document.getElementById('next');
+                const submitButton = document.getElementById('submit');
+    
+                const question = questions[index];
+                questionElement.innerHTML = `<tr><th>질문</th><td>${(index + 1)}. ${question['question']}</td></tr>`;
+                optionsElement.innerHTML = '';
+    
+                // 각 질문의 옵션을 추가
+                question['options'].forEach((option, idx) => {
+                    const optionHtml = `
+                        <tr data-value="${option.value}">
+                            <td>
+                                <label>
+                                    <input type="radio" name="question_${index + 1}" value="${option.value}">
+                                    ${option.text}
+                                </label>
+                            </td>
+                        </tr>
+                    `;
+                    optionsElement.insertAdjacentHTML('beforeend', optionHtml);
+                });
+    
+                // 라디오 버튼을 클릭할 때마다 서버로 데이터를 보냄
+                const radios = document.querySelectorAll(`input[name="question_${index + 1}"]`);
+                radios.forEach((radio) => {
+                    radio.addEventListener('click', function () {
+                        const value = radio.value;
+                        sendAnswerToServer(index + 1, value);  // 서버로 데이터를 전송하는 함수 호출
+                    });
+                });
+    
+                // '이전' 버튼 비활성화/활성화
+                prevButton.disabled = (index === 0);
+    
+                // '다음' 버튼과 '제출' 버튼 조정
+                if (index === totalQuestions - 1) {
+                    nextButton.style.display = 'none';
+                    submitButton.style.display = 'inline-block';
+                    submitButton.disabled = true;  // 선택되지 않으면 비활성화
+                } else {
+                    nextButton.style.display = 'inline-block';
+                    submitButton.style.display = 'none';
+                }
+            }
+    
+            // Ajax를 사용해 서버로 데이터를 전송하는 함수
+            function sendAnswerToServer(questionIndex, answer) {
+                fetch('/submit_answer', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ question_index: questionIndex, answer: answer })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('서버 응답:', data);
+                })
+                .catch(error => {
+                    console.error('에러 발생:', error);
+                });
+            }
+    
+            // '다음' 버튼 클릭 시 다음 질문으로 이동
+            document.getElementById('next').addEventListener('click', function () {
+                const options = document.querySelectorAll(`input[name="question_${currentQuestionIndex + 1}"]`);
+                let isChecked = false;
+                options.forEach(option => {
+                    if (option.checked) {
+                        isChecked = true;
+                    }
+                });
+    
+                if (!isChecked) {
+                    alert('항목에 체크해주세요.');
+                    return;
+                }
+    
+                if (currentQuestionIndex < totalQuestions - 1) {
+                    currentQuestionIndex++;
+                    loadQuestion(currentQuestionIndex);
+                }
+            });
+    
+            // 첫 번째 질문 로드
+            loadQuestion(currentQuestionIndex);
+        });
+    </script>
 </head>
 <body>
-    <h1>DISC 설문조사</h1>
-    <form action="{{ url_for('survey') }}" method="post">
-        {% for idx, question in enumerate(questions) %}
-            <p>{{ idx+1 }}. {{ question['question'] }}</p>
-            {% for option in question['options'] %}
-                <input type="radio" name="question_{{ idx+1 }}" value="{{ option[1] }}"> {{ option[0] }}<br>
-            {% endfor %}
-        {% endfor %}
-        <button type="submit">결과보기</button>
-    </form>
+    <div class="container">
+        <h1>DISC 설문조사</h1>
+        <form id="form" method="POST" action="{{ url_for('result') }}">
+            <table id="question"></table>
+            <table id="options"></table>
+            <div class="nav-buttons">
+                <button type="button" id="prev">이전</button>
+                <button type="submit" id="submit">제출</button>
+                <button type="button" id="next">다음</button>
+            </div>
+        </form>
+    </div>
 </body>
 </html>
