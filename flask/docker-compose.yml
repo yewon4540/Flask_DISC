@@ -1,0 +1,16 @@
+services:
+  disc-survey:
+    build: 
+      dockerfile: Dockerfile
+    hostname: disc-web
+    restart: always
+    ports:
+      - 80:80
+    volumes:
+      - .:/home
+    networks:
+      - network-aaw
+
+networks:
+  network-aaw:
+    driver: bridge

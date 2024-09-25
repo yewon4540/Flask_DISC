@@ -2,16 +2,72 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>설문조사 시작</title>
+    <title>DISC 설문조사</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            background-color: #f9f9f9;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+        input[type="text"], select {
+            width: 100%;
+            padding: 15px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            /* 높이와 박스 모델 스타일 맞춤 */
+            box-sizing: border-box;
+            height: 50px; /* input과 select의 높이를 동일하게 설정 */
+        }
+        button {
+            padding: 15px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            width: 100%;
+        }
+    </style>
 </head>
 <body>
-    <h1>DISC 설문조사</h1>
-    <form action="{{ url_for('survey') }}" method="post">
-        <label for="name">이름:</label>
-        <input type="text" id="name" name="name" required>
-        <label for="course">과정:</label>
-        <input type="text" id="course" name="course" required>
-        <button type="submit">검사하기</button>
-    </form>
+    <div class="container">
+        <h1>DISC 설문조사</h1>
+        <form action="{{ url_for('survey') }}" method="post">
+            <table>
+                <tr>
+                    <th><label for="name">이름:</label></th>
+                    <td><input type="text" id="name" name="name" required></td>
+                </tr>
+                <tr>
+                    <th><label for="course">과정:</label></th>
+                    <td>
+                        <select id="course" name="course">
+                            <option value="PM8기" selected>PM8기</option>
+                            <!-- <option value="풀스택8기">풀스택8기</option> -->
+                        </select>
+                    </td>
+                </tr>
+            </table>
+            <button type="submit">검사하기</button>
+        </form>
+    </div>
 </body>
 </html>

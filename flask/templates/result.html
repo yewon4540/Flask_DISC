@@ -1,49 +1,168 @@
-<!-- <!DOCTYPE html>
-<html lang="ko">
-<head>
-    <meta charset="UTF-8">
-    <title>결과 분석</title>
-</head>
-<body>
-    <h1>결과 분석</h1>
-    <img src="{{ analysis_image }}" alt="결과 그래프">
-    <p>{{ analysis_text }}</p>
-    <table border="1">
-        <tr><th>유형</th><th>점수</th></tr>
-        {% for row in analysis_table %}
-            <tr><td>{{ row[0] }}</td><td>{{ row[1] }}</td></tr>
-        {% endfor %}
-    </table>
-</body>
-</html> -->
-
 <!DOCTYPE html>
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
     <title>결과 분석</title>
+    <style>
+        @font-face {
+            font-family: 'MyCustomFont';
+            src: url('/static/fonts/MalangmalangB.ttf') format('truetype'); /* 로컬 폰트 경로 */
+            font-weight: normal;
+            font-style: normal;
+        }
+        body {
+            font-family: 'MyCustomFont', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            margin: 0;
+            padding: 0;
+        }
+        h1, h2, h3 {
+            text-align: center;
+        }
+        table {
+            border-collapse: collapse;
+            width: 90%;
+            max-width: 600px;
+            margin: 20px auto;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 10px;
+            text-align: left;
+        }
+        .toggle-content {
+            display: none;
+            margin-top: 10px;
+            text-align: left;
+        }
+        button.toggle-button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px;
+            margin: 10px 0;
+            border: none;
+            cursor: pointer;
+            width: 30%;
+        }
+        button.toggle-button:active, button.toggle-button:focus {
+            outline: none;
+        }
+        button.toggle-button:hover {
+            background-color: #45a049;
+        }
+
+        /* 반응형 디자인 */
+        /* @media (max-width: 600px) {
+            table {
+                width: 100%;
+            }
+            button.toggle-button {
+                padding: 8px;
+            }
+        } */
+    </style>
+    <script>
+        function toggleContent(type) {
+            var content = document.getElementById(type);
+            if (content.style.display === "block") {
+                content.style.display = "none";
+            } else {
+                content.style.display = "block";
+            }
+        }
+    </script>
 </head>
 <body>
     <h1>결과 분석</h1>
 
+    <h2>당신의 DISC 유형</h2>
+    <table>
+        <tr><th>DISC 유형</th><td>{{ disc_type_str }}</td></tr>
+    </table>
+
     <h2>설문 응답에 따른 점수</h2>
-    <table border="1">
+    <table>
         <tr><th>DISC 유형</th><th>점수</th></tr>
         {% for key, value in scores.items() %}
             <tr><td>{{ key }}</td><td>{{ value }}</td></tr>
         {% endfor %}
     </table>
 
-    <h2>선택한 응답 내용</h2>
-    <table border="1">
-        <tr><th>질문</th><th>선택한 답변</th></tr>
-        {% for index, row in dataframe.iterrows() %}
-            <tr><td>{{ row['Question'] }}</td><td>{{ row['Selected Value'] }}</td></tr>
-        {% endfor %}
-    </table>
-
     <h2>분석 그래프</h2>
-    <img src="{{ analysis_image }}" alt="결과 그래프">
+    <img src="{{ analysis_image }}" alt="결과 그래프" style="width: 90%; max-width: 600px; margin: 0 auto; display: block;">
 
+    {% if 'D' in disc_type_str %}
+    <h3>이름: 주도형 (Dominance)</h3>
+    <h3>What: 무엇이 핵심인가?</h3>
+    <p style="text-align: center;">“내 사전에 불가능이란 없다!”</p>
+
+    <button class="toggle-button" onclick="toggleContent('D-details')">자세히 보기</button>
+    <table id="D-details" class="toggle-content">
+        <tr><th>구분</th><th>내용</th></tr>
+        <tr><td>싫어하는 것</td><td>우유부단한 사람, 게으른 사람, 생산적이지 못하고 말만 많은 사람, 세세한 활동, 명령 받기</td></tr>
+        <tr><td>동기요인</td><td>업무환경에 통제권을 가짐, 새로운 도전 기회, 목적 달성에 대한 보상</td></tr>
+        <tr><td>선호하는 환경</td><td>빠른 속도, 결과지향, 결과에 대한 보상</td></tr>
+        <tr><td>회피하는 경향</td><td>자신의 통제권이 없는 환경, 반복적이고 예측 가능한 환경</td></tr>
+        <tr><td>갈등상황 시 행동</td><td>지시적이고 공격적으로 접근, 다른 사람을 제압하려 함</td></tr>
+        <tr><td>개선할 점</td><td>친근한 표현, 타인의 말을 경청하고 공감하는 태도</td></tr>
+    </table>
+    {% endif %}
+
+    {% if 'I' in disc_type_str %}
+    <h3>이름: 사교형 (Influence)</h3>
+    <h3>Who: 누가 갈 것인가?</h3>
+    <p style="text-align: center;">“세상은 넓고 할 일은 많다.”</p>
+
+    <button class="toggle-button" onclick="toggleContent('I-details')">자세히 보기</button>
+    <table id="I-details" class="toggle-content">
+        <tr><th>구분</th><th>내용</th></tr>
+        <tr><td>싫어하는 것</td><td>무시 받는 것, 반복적인 업무, 장기적인 프로젝트</td></tr>
+        <tr><td>동기요인</td><td>긍정적 상호교류, 자유로운 대화, 즉각적 응대</td></tr>
+        <tr><td>선호하는 환경</td><td>열정적이고 빠른 관계형성, 사회적 인정</td></tr>
+        <tr><td>회피하는 경향</td><td>인정받지 못하는 환경, 반복되는 일</td></tr>
+        <tr><td>갈등상황 시 행동</td><td>공개적 갈등을 피함, 사적인 감정으로 공격</td></tr>
+        <tr><td>개선할 점</td><td>객관성, 감정관리, 시간 관리</td></tr>
+    </table>
+    {% endif %}
+
+    {% if 'S' in disc_type_str %}
+    <h3>이름: 안정형 (Steadiness)</h3>
+    <h3>How: 어떻게 하길 원하는가?</h3>
+    <p style="text-align: center;">“우리는 하나”</p>
+
+    <button class="toggle-button" onclick="toggleContent('S-details')">자세히 보기</button>
+    <table id="S-details" class="toggle-content">
+        <tr><th>구분</th><th>내용</th></tr>
+        <tr><td>싫어하는 것</td><td>둔감함, 누군가에게 소리치는 것, 오해</td></tr>
+        <tr><td>동기요인</td><td>협력적 업무환경, 예측 가능한 환경, 조화로운 업무환경</td></tr>
+        <tr><td>선호하는 환경</td><td>예측 가능한 과제, 호의적 협조관계</td></tr>
+        <tr><td>회피하는 경향</td><td>불확실한 환경, 적대적 상황</td></tr>
+        <tr><td>갈등상황 시 행동</td><td>공격을 피하고, 문제 해결보다 양보</td></tr>
+        <tr><td>개선할 점</td><td>자기확신, 직선적 표현, 신속한 응대</td></tr>
+    </table>
+    {% endif %}
+
+    {% if 'C' in disc_type_str %}
+    <h3>이름: 신중형 (Conscientiousness)</h3>
+    <h3>Why: 왜 하길 원하는가?</h3>
+    <p style="text-align: center;">“돌다리도 두드려 보고 건너라”</p>
+
+    <button class="toggle-button" onclick="toggleContent('C-details')">자세히 보기</button>
+    <table id="C-details" class="toggle-content">
+        <tr><th>구분</th><th>내용</th></tr>
+        <tr><td>싫어하는 것</td><td>비판, 실수, 갑작스런 변화</td></tr>
+        <tr><td>동기요인</td><td>정확한 일 처리, 논리적 접근</td></tr>
+        <tr><td>선호하는 환경</td><td>계획적 업무, 조용한 환경</td></tr>
+        <tr><td>회피하는 경향</td><td>비판 받는 환경, 통제를 못하는 상황</td></tr>
+        <tr><td>갈등상황 시 행동</td><td>사실적이고 논리적으로 접근, 간접 공격</td></tr>
+        <tr><td>개선할 점</td><td>그룹 참여, 모호함에 대한 관용</td></tr>
+    </table>
+    {% endif %}
+
+    <h2>요약 정리</h2>
+    <img src="/static/images/DISC_Description.png" alt="결과 그래프">
 </body>
 </html>
