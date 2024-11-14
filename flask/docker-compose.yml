@@ -5,7 +5,7 @@ services:
     hostname: disc-web
     restart: always
     ports:
-      - 80:80
+      - 5000:5000
     volumes:
       - .:/home
     networks:
